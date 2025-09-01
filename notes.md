@@ -46,3 +46,16 @@
 
 # Resources
 https://embedded-elixir.com/post/2019-01-18-nerves-at-home-desk-controller/
+
+# Desk Hard Reset Procedure
+**Important: Use this procedure if the desk gets stuck or becomes unresponsive**
+
+1. Hold DOWN button until desk reaches the lowest possible position
+2. "ASR" will start flashing on the screen - this indicates reset mode
+3. Release the DOWN button
+4. Hold DOWN button again and continue holding
+5. Desk will go even lower than 25 inches (below normal minimum)
+6. Desk will automatically bump back up to 25 inches
+7. Release the DOWN button - reset is complete
+
+**Note: This procedure resets the desk's internal calibration and safety systems**
