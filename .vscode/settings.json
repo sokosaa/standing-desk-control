@@ -1,0 +1,4 @@
+{
+    "arduino.useArduinoCli": true,
+    "arduino.commandPath": "C:/dev/arduino-cli_1.3.1_Windows_64bit/arduino-cli.exe"
+}

@@ -1,4 +1,5 @@
 {
     "port": "COM9",
-    "fqbn": "arduino:renesas_uno:unor4wifi"
+    "board": "arduino:renesas_uno:unor4wifi",
+    "programmer": "cmsis-dap"
 }
