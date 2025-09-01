@@ -148,38 +148,41 @@ void recallPreset(int presetNum) {
   Serial.print("Recalling preset ");
   Serial.println(presetNum);
   
-  // Use the SAME button combination for recall as we use for programming
-  // This might be the key - we need to match the programming and recall sequences
+  // Each preset uses different button combinations based on protocol analysis
   switch(presetNum) {
     case 1:
-      // Use the same DOWN+UP combination as programming
-      Serial.println("Trying DOWN+UP combination for preset 1 recall...");
+      // Preset 1: DOWN+UP combination (protocol: 0x01 0x06 0x01 0x00)
+      Serial.println("Using DOWN+UP combination for preset 1...");
       digitalWrite(DOWN_PIN, LOW);
       digitalWrite(UP_PIN, LOW);
-      delay(500); // Longer press for recall
+      delay(150);
       digitalWrite(DOWN_PIN, HIGH);
       digitalWrite(UP_PIN, HIGH);
       break;
     case 2:
-      // Use PRESET_PIN like in programming
-      Serial.println("Trying PRESET_PIN for preset 2 recall...");
+      // Preset 2: PRESET button only (protocol: 0x01 0x06 0x02 0x00)
+      Serial.println("Using PRESET button for preset 2...");
       digitalWrite(PRESET_PIN, LOW);
-      delay(500);
+      delay(150);
       digitalWrite(PRESET_PIN, HIGH);
       break;
     case 3:
-      // Use DOWN_PIN like in programming
-      Serial.println("Trying DOWN_PIN for preset 3 recall...");
+      // Preset 3: DOWN+PRESET combination (protocol: 0x01 0x06 0x04 0x00)
+      Serial.println("Using DOWN+PRESET combination for preset 3...");
       digitalWrite(DOWN_PIN, LOW);
-      delay(500);
+      digitalWrite(PRESET_PIN, LOW);
+      delay(150);
       digitalWrite(DOWN_PIN, HIGH);
+      digitalWrite(PRESET_PIN, HIGH);
       break;
     case 4:
-      // Use UP_PIN like in programming
-      Serial.println("Trying UP_PIN for preset 4 recall...");
+      // Preset 4: UP+PRESET combination (predicted)
+      Serial.println("Using UP+PRESET combination for preset 4...");
       digitalWrite(UP_PIN, LOW);
-      delay(500);
+      digitalWrite(PRESET_PIN, LOW);
+      delay(150);
       digitalWrite(UP_PIN, HIGH);
+      digitalWrite(PRESET_PIN, HIGH);
       break;
   }
   
@@ -195,45 +198,54 @@ void programPreset(int presetNum) {
   Serial.println(presetNum);
   
   // Step 1: Press M button to enter programming mode
+  // This generates 0x01 0x06 0x00 0x00 packets
   Serial.println("Entering programming mode...");
   digitalWrite(M_PIN, LOW);
-  delay(200);
+  delay(150); // Similar to manual timing (~138-168ms)
   digitalWrite(M_PIN, HIGH);
   delay(500); // Wait for programming mode to activate
   
-  // Step 2: Simulate the preset button for the specific preset
-  // This might need adjustment based on how presets are differentiated
+  // Step 2: Select preset slot using discovered button combinations
   Serial.println("Selecting preset slot...");
-  
-  // Try different combinations based on preset number
   switch(presetNum) {
     case 1:
+      // Preset 1: DOWN+UP combination (generates 0x01 0x06 0x01 0x00)
       digitalWrite(DOWN_PIN, LOW);
       digitalWrite(UP_PIN, LOW);
-      delay(100);
+      delay(170);
       digitalWrite(DOWN_PIN, HIGH);
       digitalWrite(UP_PIN, HIGH);
       break;
     case 2:
+      // Preset 2: PRESET button only (generates 0x01 0x06 0x02 0x00)
       digitalWrite(PRESET_PIN, LOW);
-      delay(100);
+      delay(170);
       digitalWrite(PRESET_PIN, HIGH);
       break;
     case 3:
-      // Different pattern for preset 3
+      // Preset 3: DOWN+PRESET combination (generates 0x01 0x06 0x04 0x00)
       digitalWrite(DOWN_PIN, LOW);
-      delay(100);
+      digitalWrite(PRESET_PIN, LOW);
+      delay(170);
       digitalWrite(DOWN_PIN, HIGH);
+      digitalWrite(PRESET_PIN, HIGH);
       break;
     case 4:
-      // Different pattern for preset 4
+      // Preset 4: UP+PRESET combination (predicted to generate 0x01 0x06 0x08 0x00)
       digitalWrite(UP_PIN, LOW);
-      delay(100);
+      digitalWrite(PRESET_PIN, LOW);
+      delay(170);
       digitalWrite(UP_PIN, HIGH);
+      digitalWrite(PRESET_PIN, HIGH);
       break;
   }
   
+  delay(500); // Wait for programming to complete
   Serial.println("Programming complete!");
+  
+  // Wait and monitor for confirmation packets
+  Serial.println("Monitoring for programming confirmation...");
+  delay(2000); // Give time to see programming packets
 }
 
 void manualMove(bool up, int duration) {
