@@ -1,0 +1,4 @@
+{
+    "port": "COM9",
+    "fqbn": "arduino:renesas_uno:unor4wifi"
+}
