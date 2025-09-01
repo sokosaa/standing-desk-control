@@ -49,30 +49,26 @@ void setup() {
 void loop() {
   readHeightData();
   handleSerialCommands();
-  delay(10);
 }
 
 void readHeightData() {
   static uint8_t buffer[4];
   static int index = 0;
-  static uint16_t lastHeight = 0xFFFF;
+  static uint16_t lastHeight = 0xFFFF; // Invalid initial height
 
   if (Serial1.available()) {
     buffer[index] = Serial1.read();
     index++;
-    if (index == 4) {
-      if (buffer[0] == 0x01 && buffer[1] == 0x01) {
-        // Normal height packet
-        uint16_t height = (buffer[2] << 8) | buffer[3];
-        // Filter out the constant 0x0101 noise (257 = 25.7") and only show changes
-        if (height != lastHeight && height > 260 && height < 1000) {
-          float newHeight = height / 10.0;
-          currentHeight = newHeight; // Always update currentHeight with valid readings
+    if (index == 4) { // Full packet
+      if (buffer[0] == 0x01 && buffer[1] == 0x01) { // Valid height packet
+        uint16_t height = (buffer[2] << 8) | buffer[3]; // Combine high/low bytes
+        if (height != lastHeight) { // Print only if height changes
+          float inches = height / 10.0; // Tenths of an inch
           Serial.print("Height: ");
-          Serial.print(currentHeight);
+          Serial.print(inches);
           Serial.println(" inches");
           lastHeight = height;
-          programmingMode = false;
+          currentHeight = inches; // Update for programming/presets
         }
       } else if (buffer[0] == 0x06 && buffer[1] == 0x00) {
         // Programming mode packet (reordered from what we expected)
